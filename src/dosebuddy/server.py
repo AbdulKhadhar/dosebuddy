@@ -21,6 +21,24 @@ class Handler(BaseHTTPRequestHandler):
             return self._send({"ok": True, "version": __version__})
         if self.path == "/api/plan":
             return self._send(storage.latest_plan())
+
+        # Serve static assets (app.css, app.js, icons, etc.)
+        clean_path = self.path.split("?")[0].lstrip("/")
+        if clean_path:
+            file_path = (config.STATIC / clean_path).resolve()
+            static_dir = config.STATIC.resolve()
+            if file_path.is_file() and (file_path == static_dir or static_dir in file_path.parents):
+                mime = "text/plain"
+                if clean_path.endswith(".css"):
+                    mime = "text/css; charset=utf-8"
+                elif clean_path.endswith(".js"):
+                    mime = "application/javascript; charset=utf-8"
+                elif clean_path.endswith(".svg"):
+                    mime = "image/svg+xml"
+                elif clean_path.endswith(".html"):
+                    mime = "text/html; charset=utf-8"
+                return self._send(file_path.read_bytes(), ctype=mime)
+
         self._send((config.STATIC / "index.html").read_bytes(), ctype="text/html; charset=utf-8")
 
     def do_POST(self):

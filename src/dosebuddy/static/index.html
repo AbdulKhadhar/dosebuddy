@@ -4,608 +4,50 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DoseBuddy - Smart Medicine Companion</title>
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --surface-subtle: #f1f5f9;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --line: #e2e8f0;
-      
-      --primary: #059669;
-      --primary-hover: #047857;
-      --primary-light: #ecfdf5;
-      --primary-border: #a7f3d0;
-      
-      --morning-bg: #fffbeb;
-      --morning-border: #fde68a;
-      --morning-accent: #d97706;
-      
-      --afternoon-bg: #f0f9ff;
-      --afternoon-border: #bae6fd;
-      --afternoon-accent: #0284c7;
-      
-      --night-bg: #f5f3ff;
-      --night-border: #ddd6fe;
-      --night-accent: #7c3aed;
-      
-      --bad: #ef4444;
-      --bad-bg: #fef2f2;
-      --warn: #f59e0b;
-      --warn-bg: #fffbeb;
-      --info-bg: #f8fafc;
-      
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 22px;
-      --radius-full: 9999px;
-      
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 12px -2px rgba(15,23,42,0.08), 0 2px 6px -2px rgba(15,23,42,0.04);
-      --shadow-lg: 0 12px 24px -4px rgba(15,23,42,0.1), 0 4px 10px -2px rgba(15,23,42,0.05);
-    }
-
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      font-size: 16px;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* Container */
-    .app-wrap {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 24px 20px 80px;
-    }
-
-    /* Header */
-    header.app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 24px;
-    }
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .brand-icon {
-      font-size: 2rem;
-      background: var(--primary-light);
-      border: 1px solid var(--primary-border);
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .brand-title {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin: 0;
-      letter-spacing: -0.02em;
-    }
-    .brand-subtitle {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin: 0;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Stepper Tabs */
-    .stepper {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: var(--radius-full);
-      gap: 4px;
-      margin-bottom: 28px;
-    }
-    .step-btn {
-      border: none;
-      background: transparent;
-      padding: 10px 14px;
-      border-radius: var(--radius-full);
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-    .step-btn:hover {
-      color: var(--text-main);
-    }
-    .step-btn.active {
-      background: var(--surface);
-      color: var(--primary);
-      box-shadow: var(--shadow-sm);
-    }
-    .step-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 22px;
-      height: 22px;
-      border-radius: var(--radius-full);
-      font-size: 0.78rem;
-      background: var(--surface-subtle);
-      color: var(--text-muted);
-    }
-    .step-btn.active .step-badge {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    /* Views */
-    .view-step {
-      display: none;
-      animation: fadeIn 0.25s ease forwards;
-    }
-    .view-step.active {
-      display: block;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Cards */
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 24px;
-    }
-    .panel-header {
-      margin-bottom: 20px;
-    }
-    .panel-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin: 0 0 6px;
-      letter-spacing: -0.01em;
-    }
-    .panel-desc {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    /* Controls */
-    label.field-label {
-      display: block;
-      font-size: 0.88rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-main);
-    }
-    input[type=text], input[type=time], select, textarea {
-      width: 100%;
-      font-family: inherit;
-      font-size: 1rem;
-      color: var(--text-main);
-      padding: 10px 14px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      background: var(--surface);
-      transition: all 0.15s ease;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
-    }
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-      line-height: 1.6;
-    }
-
-    .form-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-family: inherit;
-      font-size: 0.95rem;
-      font-weight: 600;
-      padding: 11px 20px;
-      border-radius: var(--radius-full);
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      text-decoration: none;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-    }
-    .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: 0 4px 10px rgba(5, 150, 105, 0.25);
-    }
-    .btn-outline {
-      background: var(--surface);
-      border-color: var(--line);
-      color: var(--text-main);
-    }
-    .btn-outline:hover {
-      background: var(--surface-subtle);
-      border-color: #cbd5e1;
-    }
-    .btn-danger {
-      background: #fee2e2;
-      color: #991b1b;
-      border-color: #fecaca;
-    }
-    .btn-danger:hover {
-      background: #fecaca;
-    }
-    .btn-sm {
-      padding: 6px 12px;
-      font-size: 0.85rem;
-      border-radius: var(--radius-md);
-    }
-
-    .btn-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    /* Medicine Review Table/Rows */
-    .med-item {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 2fr 1.2fr auto;
-      gap: 10px;
-      align-items: center;
-      padding: 12px 14px;
-      margin-bottom: 10px;
-      background: var(--surface-subtle);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-    }
-    .time-chips {
-      display: flex;
-      gap: 6px;
-    }
-    .time-chip-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: var(--radius-sm);
-      background: #fff;
-      border: 1px solid var(--line);
-      user-select: none;
-    }
-    .time-chip-label input[type=checkbox] {
-      accent-color: var(--primary);
-    }
-
-    /* Schedule View & Compartments */
-    .card-today {
-      border: 2px solid var(--primary-border);
-      background: #ffffff;
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--shadow-md);
-      margin-bottom: 20px;
-    }
-    .card-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      padding-bottom: 16px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--line);
-    }
-    .person-name {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin: 0;
-    }
-
-    .slots-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .slot-col {
-      border-radius: var(--radius-md);
-      padding: 16px;
-      border: 1px solid transparent;
-      display: flex;
-      flex-direction: column;
-      min-height: 250px;
-    }
-    .slot-col.morning {
-      background: var(--morning-bg);
-      border-color: var(--morning-border);
-    }
-    .slot-col.afternoon {
-      background: var(--afternoon-bg);
-      border-color: var(--afternoon-border);
-    }
-    .slot-col.night {
-      background: var(--night-bg);
-      border-color: var(--night-border);
-    }
-
-    .slot-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    .slot-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .slot-time-badge {
-      font-size: 0.85rem;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: var(--radius-full);
-      background: rgba(255,255,255,0.85);
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-    .morning .slot-time-badge { color: var(--morning-accent); }
-    .afternoon .slot-time-badge { color: var(--afternoon-accent); }
-    .night .slot-time-badge { color: var(--night-accent); }
-
-    .slot-med-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex-grow: 1;
-    }
-    .med-pill-card {
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.08);
-      border-radius: var(--radius-md);
-      padding: 12px;
-      cursor: pointer;
-      text-align: left;
-      font-family: inherit;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      position: relative;
-    }
-    .med-pill-card:hover {
-      box-shadow: var(--shadow-sm);
-      transform: translateY(-1px);
-    }
-    .med-pill-card.taken {
-      opacity: 0.6;
-      background: #f8fafc;
-      border-color: #cbd5e1;
-    }
-    .med-pill-card.taken .med-pill-name {
-      text-decoration: line-through;
-      color: var(--text-muted);
-    }
-    .med-pill-name {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-    .med-pill-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.84rem;
-      color: var(--text-muted);
-    }
-    .med-pill-badge {
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: var(--radius-sm);
-      background: var(--surface-subtle);
-      color: var(--text-muted);
-    }
-    .med-pill-check {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 0.95rem;
-      color: var(--primary);
-      opacity: 0;
-      transition: opacity 0.15s ease;
-    }
-    .med-pill-card.taken .med-pill-check {
-      opacity: 1;
-    }
-    .empty-slot {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin: auto 0;
-      font-style: italic;
-    }
-
-    /* Progress Tracker Bar */
-    .progress-box {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-md);
-      padding: 14px 18px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .progress-track {
-      flex: 1;
-      height: 10px;
-      background: #e2e8f0;
-      border-radius: var(--radius-full);
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--primary);
-      border-radius: var(--radius-full);
-      transition: width 0.3s ease;
-    }
-    .progress-text {
-      font-size: 0.92rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    /* Warning Alerts */
-    .warning-stack {
-      margin-bottom: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .alert-card {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px 16px;
-      border-radius: var(--radius-md);
-      font-size: 0.92rem;
-      line-height: 1.4;
-    }
-    .alert-card.danger {
-      background: var(--bad-bg);
-      border: 1px solid #fecaca;
-      color: #991b1b;
-    }
-    .alert-card.warn {
-      background: var(--warn-bg);
-      border: 1px solid #fde68a;
-      color: #92400e;
-    }
-    .alert-card.info {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: #1e40af;
-    }
-
-    /* Voice Notification Pill */
-    #fire {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #0f172a;
-      color: #fff;
-      padding: 16px 20px;
-      border-radius: var(--radius-lg);
-      font-size: 1rem;
-      font-weight: 600;
-      box-shadow: var(--shadow-lg);
-      display: none;
-      z-index: 1000;
-      max-width: 400px;
-      border: 1px solid rgba(255,255,255,0.15);
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    /* Print styling */
-    @media print {
-      body { background: #fff; }
-      .noprint, .stepper, header.app-header, #fire { display: none !important; }
-      .view-step { display: none !important; }
-      #view-schedule { display: block !important; }
-      .app-wrap { max-width: 100%; padding: 0; }
-      .card-today { border: 2px solid #000; box-shadow: none; }
-    }
-
-    /* Accessibility Big Text */
-    body.big {
-      font-size: 20px;
-    }
-    body.big .brand-title { font-size: 2.1rem; }
-    body.big .med-pill-name { font-size: 1.3rem; }
-    body.big .med-pill-meta { font-size: 1.05rem; }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .slots-grid { grid-template-columns: 1fr; }
-      .med-item { grid-template-columns: 1fr; }
-      .form-grid-2 { grid-template-columns: 1fr; }
-      .stepper { font-size: 0.85rem; }
-    }
-  </style>
+  <link rel="stylesheet" href="/app.css">
 </head>
 <body>
 <div class="app-wrap">
   <!-- Top App Navigation -->
   <header class="app-header noprint">
     <div class="brand-wrap">
-      <div class="brand-icon">💊</div>
+      <div class="brand-icon-box" aria-hidden="true">
+        <!-- SVG Pill Icon -->
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+        </svg>
+      </div>
       <div>
         <h1 class="brand-title">DoseBuddy</h1>
         <p class="brand-subtitle">Private, offline medicine companion for families</p>
       </div>
     </div>
     <div class="header-actions">
-      <button class="btn btn-outline btn-sm" id="btn-text-size">🔤 Larger Text</button>
-      <button class="btn btn-outline btn-sm" id="btn-print">🖨️ Print Fridge Card</button>
+      <button class="btn btn-outline btn-sm" id="btn-text-size">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 5v14m6-7h6m-3-3v6"/></svg>
+        Larger Text
+      </button>
+      <button class="btn btn-outline btn-sm" id="btn-print">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        Print Fridge Card
+      </button>
     </div>
   </header>
 
-  <!-- Step Wizard Tabs -->
+  <!-- Background Desktop Notification Banner -->
+  <div class="notif-permission-bar noprint" id="notif-banner" style="display:none;">
+    <div class="lead-txt">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span>Enable desktop notifications so DoseBuddy alerts you even when minimized.</span>
+    </div>
+    <button class="btn btn-primary btn-sm" id="btn-enable-notif">Enable Notifications</button>
+  </div>
+
+  <!-- Stepper Tabs -->
   <nav class="stepper noprint" aria-label="Workflow Steps">
     <button class="step-btn active" data-step="1">
       <span class="step-badge">1</span>
@@ -625,20 +67,20 @@
   <section class="view-step active" id="view-input">
     <div class="panel">
       <div class="panel-header">
-        <h2 class="panel-title">1. Patient Profile & Language</h2>
-        <p class="panel-desc">Set who will receive spoken reminders and in what language.</p>
+        <h2 class="panel-title">1. Patient Profile & Voice Language</h2>
+        <p class="panel-desc">Set who will receive spoken reminders and choose their preferred language.</p>
       </div>
       <div class="form-grid-2">
         <div>
           <label class="field-label" for="who">Recipient Name</label>
-          <input type="text" id="who" value="Amma" placeholder="e.g. Amma, Dad, John">
+          <input type="text" id="who" value="Amma" placeholder="e.g. Amma, Dad, Mary">
         </div>
         <div>
           <label class="field-label" for="lang">Reminder Language</label>
           <select id="lang">
             <option value="en">English (Indian Accent)</option>
-            <option value="hi">हिन्दी (Hindi)</option>
             <option value="ml">മലയാളം (Malayalam)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
           </select>
         </div>
       </div>
@@ -647,11 +89,14 @@
     <div class="panel">
       <div class="panel-header">
         <h2 class="panel-title">2. Doctor's Prescription Notes</h2>
-        <p class="panel-desc">Paste what the doctor or discharge summary says. Our local parser extracts times and dosages automatically.</p>
+        <p class="panel-desc">Paste what the doctor or discharge summary says. Our parser categorizes times, meals, and dosages automatically.</p>
       </div>
       <textarea id="txt" autofocus placeholder="Example: Thyroid tablet 50 mcg early morning on empty stomach. Metformin 500 mg after lunch. Calcium tablet after breakfast. BP tablet 5 mg at night."></textarea>
       <div class="btn-bar">
-        <button class="btn btn-primary" id="btn-parse">✨ Make My Plan</button>
+        <button class="btn btn-primary" id="btn-parse">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Make My Plan
+        </button>
         <button class="btn btn-outline" id="btn-sample">Try Sample Prescription</button>
         <span id="src" style="font-size:0.9rem; color:var(--text-muted); margin-left:auto;"></span>
       </div>
@@ -663,12 +108,18 @@
     <div class="panel">
       <div class="panel-header">
         <h2 class="panel-title">Review Extracted Medications</h2>
-        <p class="panel-desc">Double-check the extracted details with the physical packaging before finalizing.</p>
+        <p class="panel-desc">Double-check the extracted details with the physical packaging before generating the daily schedule.</p>
       </div>
       <div id="meds-list"></div>
       <div class="btn-bar">
-        <button class="btn btn-outline" id="btn-add-med">➕ Add Another Medicine</button>
-        <button class="btn btn-primary" style="margin-left:auto;" id="btn-confirm-plan">Continue to Daily Schedule →</button>
+        <button class="btn btn-outline" id="btn-add-med">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Add Another Medicine
+        </button>
+        <button class="btn btn-primary" style="margin-left:auto;" id="btn-confirm-plan">
+          Continue to Daily Schedule
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
       </div>
     </div>
   </section>
@@ -694,8 +145,14 @@
           <span style="font-size:0.85rem; color:var(--text-muted);">Organized into morning, afternoon, and evening compartments</span>
         </div>
         <div class="noprint" style="display:flex; gap:8px;">
-          <button class="btn btn-outline btn-sm" id="btn-share-wa">📱 Copy for WhatsApp</button>
-          <button class="btn btn-outline btn-sm" id="btn-speak-sample">🔊 Hear Reminder</button>
+          <button class="btn btn-outline btn-sm" id="btn-share-wa">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+            Copy WhatsApp Text
+          </button>
+          <button class="btn btn-outline btn-sm" id="btn-speak-sample">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            Hear Reminder
+          </button>
         </div>
       </div>
 
@@ -704,7 +161,10 @@
         <!-- Morning -->
         <div class="slot-col morning">
           <div class="slot-header">
-            <h3 class="slot-title">🌅 Morning</h3>
+            <h3 class="slot-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              Morning
+            </h3>
             <span class="slot-time-badge" id="badge-t0">08:00 AM</span>
           </div>
           <div class="slot-med-list" id="slot-morning"></div>
@@ -713,7 +173,10 @@
         <!-- Afternoon -->
         <div class="slot-col afternoon">
           <div class="slot-header">
-            <h3 class="slot-title">☀️ Afternoon</h3>
+            <h3 class="slot-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Afternoon
+            </h3>
             <span class="slot-time-badge" id="badge-t1">01:00 PM</span>
           </div>
           <div class="slot-med-list" id="slot-afternoon"></div>
@@ -722,7 +185,10 @@
         <!-- Night -->
         <div class="slot-col night">
           <div class="slot-header">
-            <h3 class="slot-title">🌙 Night</h3>
+            <h3 class="slot-title">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+              Night
+            </h3>
             <span class="slot-time-badge" id="badge-t2">08:00 PM</span>
           </div>
           <div class="slot-med-list" id="slot-night"></div>
@@ -737,367 +203,36 @@
     <!-- Reminder Settings & Times -->
     <div class="panel noprint" style="margin-top:24px;">
       <div class="panel-header">
-        <h3 class="panel-title" style="font-size:1.15rem;">Voice Reminder Preferences & Schedule Times</h3>
-        <p class="panel-desc">Leave this browser tab open to receive spoken alerts at these exact times.</p>
+        <h3 class="panel-title" style="font-size:1.15rem;">Voice & Notification Preferences</h3>
+        <p class="panel-desc">Keep this window open or minimized to receive desktop alerts and speech at these times.</p>
       </div>
       <div style="margin-bottom:14px;">
         <label style="display:inline-flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
-          <input type="checkbox" id="rem" style="width:18px; height:18px; accent-color:var(--primary);">
-          Enable automatic voice notifications throughout the day
+          <input type="checkbox" id="rem" checked style="width:18px; height:18px; accent-color:var(--primary);">
+          Enable automatic audio & desktop notifications throughout the day
         </label>
       </div>
       <div class="form-grid-2" style="grid-template-columns: repeat(3, 1fr);">
         <div>
-          <label class="field-label" for="t0">Morning Time</label>
+          <label class="field-label" for="t0">Morning Reminder</label>
           <input type="time" id="t0" value="08:00">
         </div>
         <div>
-          <label class="field-label" for="t1">Afternoon Time</label>
+          <label class="field-label" for="t1">Afternoon Reminder</label>
           <input type="time" id="t1" value="13:00">
         </div>
         <div>
-          <label class="field-label" for="t2">Night Time</label>
+          <label class="field-label" for="t2">Night Reminder</label>
           <input type="time" id="t2" value="20:00">
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Live speech pop-up banner -->
+  <!-- Live speech banner -->
   <div id="fire" role="alert"></div>
 </div>
 
-<script>
-  const $ = s => document.querySelector(s);
-  const $$ = s => document.querySelectorAll(s);
-  const SL = ["morning", "afternoon", "night"];
-  const FOOD = { any: "No food rule", before: "Before food", after: "After food", with: "With food", empty: "Empty stomach" };
-
-  const T = {
-    en: { code: "en-IN", slot: { morning: "morning", afternoon: "afternoon", night: "night" }, say: (n, s, m) => `${n}, it is ${s} time. Please take: ${m}.` },
-    hi: { code: "hi-IN", slot: { morning: "सुबह", afternoon: "दोपहर", night: "रात" }, say: (n, s, m) => `${n}, ${s} की दवा का समय हो गया है। कृपया लें: ${m}।` },
-    ml: { code: "ml-IN", slot: { morning: "രാവിലെ", afternoon: "ഉച്ചയ്ക്ക്", night: "രാത്രി" }, say: (n, s, m) => `${n}, ${s} മരുന്ന് കഴിക്കാനുള്ള സമയമായി. കഴിക്കേണ്ടത്: ${m}.` }
-  };
-
-  const esc = s => String(s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-
-  let meds = [], plan = null;
-
-  async function api(p, b) {
-    const r = await fetch(p, b ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b) } : {});
-    return r.json();
-  }
-
-  // Stepper Management
-  function goToStep(stepNum) {
-    $$(".step-btn").forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.step == stepNum);
-    });
-    $$(".view-step").forEach((view, index) => {
-      view.classList.toggle("active", index + 1 == stepNum);
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  $$(".step-btn").forEach(btn => {
-    btn.addEventListener("click", () => goToStep(btn.dataset.step));
-  });
-
-  // Render Step 2: Med List
-  function drawMeds() {
-    const container = $("#meds-list");
-    if (!meds.length) {
-      container.innerHTML = '<p style="color:var(--text-muted); font-style:italic;">No medicines added yet. Go to Step 1 to paste prescription text or click "Add Another Medicine" below.</p>';
-      return;
-    }
-
-    container.innerHTML = meds.map((m, i) => `
-      <div class="med-item">
-        <input type="text" data-i="${i}" data-k="name" value="${esc(m.name)}" placeholder="Medicine Name (e.g. Metformin)" aria-label="Medicine Name">
-        <input type="text" data-i="${i}" data-k="dose" value="${esc(m.dose)}" placeholder="Dose (e.g. 500 mg)" aria-label="Dose">
-        <div class="time-chips">
-          ${SL.map(s => `
-            <label class="time-chip-label">
-              <input type="checkbox" data-i="${i}" data-s="${s}" ${m.times.includes(s) ? "checked" : ""}>
-              ${s.charAt(0).toUpperCase() + s.slice(1)}
-            </label>
-          `).join("")}
-        </div>
-        <select data-i="${i}" data-k="food" aria-label="Food Rule">
-          ${Object.keys(FOOD).map(f => `<option value="${f}" ${m.food == f ? "selected" : ""}>${FOOD[f]}</option>`).join("")}
-        </select>
-        <button class="btn btn-danger btn-sm" data-del="${i}">Remove</button>
-      </div>
-    `).join("");
-  }
-
-  $("#meds-list").addEventListener("input", e => {
-    const i = e.target.dataset.i;
-    if (i == null) return;
-    if (e.target.dataset.k) meds[i][e.target.dataset.k] = e.target.value;
-    if (e.target.dataset.s) {
-      const s = e.target.dataset.s;
-      if (e.target.checked) {
-        if (!meds[i].times.includes(s)) meds[i].times.push(s);
-      } else {
-        meds[i].times = meds[i].times.filter(x => x !== s);
-      }
-    }
-  });
-
-  $("#meds-list").addEventListener("click", e => {
-    if (e.target.dataset.del != null) {
-      meds.splice(+e.target.dataset.del, 1);
-      drawMeds();
-    }
-  });
-
-  $("#btn-add-med").onclick = () => {
-    meds.push({ name: "", dose: "", times: ["morning"], food: "after" });
-    drawMeds();
-  };
-
-  // Step 1 Extraction
-  $("#btn-parse").onclick = async () => {
-    const text = $("#txt").value.trim();
-    if (!text) {
-      alert("Please paste or type the prescription notes first.");
-      return;
-    }
-    $("#src").textContent = "Analyzing prescription...";
-    const r = await api("/api/extract", { text });
-    meds = r.meds || [];
-    $("#src").textContent = meds.length ? `Analyzed with: ${r.source}` : "Could not identify medicines. You can add them manually in Step 2.";
-    drawMeds();
-    if (meds.length) {
-      await updatePlanData();
-      goToStep(2);
-    }
-  };
-
-  $("#btn-sample").onclick = () => {
-    $("#txt").value = "Thyroid tablet 50 mcg early morning on empty stomach. Metformin 500 mg after lunch. Calcium tablet after breakfast. BP tablet 5 mg at night.";
-    $("#btn-parse").click();
-  };
-
-  $("#btn-confirm-plan").onclick = async () => {
-    await updatePlanData();
-    goToStep(3);
-  };
-
-  async function updatePlanData() {
-    plan = await api("/api/plan", { meds, name: $("#who").value, lang: $("#lang").value });
-    drawPlan();
-  }
-
-  function getTimes() {
-    return [$("#t0").value, $("#t1").value, $("#t2").value];
-  }
-
-  // Format 24h to 12h display
-  function format12h(time24) {
-    if (!time24) return "";
-    const [h, m] = time24.split(":");
-    const hour = parseInt(h, 10);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    const h12 = hour % 12 || 12;
-    return `${h12}:${m} ${ampm}`;
-  }
-
-  // Draw Step 3 Plan & Cards
-  function drawPlan() {
-    if (!plan || !plan.meds) return;
-
-    // Recipient Title
-    $("#card-person-name").textContent = `${plan.name || "My"}’s Daily Schedule`;
-
-    // Warnings
-    const warnBox = $("#warning-container");
-    if (plan.warnings && plan.warnings.length) {
-      warnBox.innerHTML = plan.warnings.map(w => `
-        <div class="alert-card ${w.level}">
-          <span>${w.level === 'danger' ? '⚠️' : 'ℹ️'}</span>
-          <div>${esc(w.text)}</div>
-        </div>
-      `).join("");
-    } else {
-      warnBox.innerHTML = `
-        <div class="alert-card info">
-          <span>✅</span>
-          <div>No timing conflicts detected in standard rule checks. Always confirm with your physician or pharmacist.</div>
-        </div>
-      `;
-    }
-
-    // Time Badges
-    const times = getTimes();
-    $("#badge-t0").textContent = format12h(times[0]);
-    $("#badge-t1").textContent = format12h(times[1]);
-    $("#badge-t2").textContent = format12h(times[2]);
-
-    // Slots
-    const taken = getTaken();
-    SL.forEach(slot => {
-      const container = $("#slot-" + slot);
-      const list = plan.slots[slot] || [];
-      if (!list.length) {
-        container.innerHTML = '<div class="empty-slot">No medicines for this time</div>';
-      } else {
-        container.innerHTML = list.map(m => {
-          const key = slot + m.name;
-          const isTaken = !!taken[key];
-          return `
-            <div class="med-pill-card ${isTaken ? 'taken' : ''}" data-k="${esc(key)}">
-              <span class="med-pill-check">✓</span>
-              <div class="med-pill-name">${esc(m.name)}</div>
-              <div class="med-pill-meta">
-                <span>${esc(m.dose)}</span>
-                ${m.food && m.food !== 'any' ? `<span class="med-pill-badge">${FOOD[m.food]}</span>` : ''}
-              </div>
-            </div>
-          `;
-        }).join("");
-      }
-    });
-
-    drawProgress();
-  }
-
-  const dayKey = () => "taken:" + new Date().toDateString();
-  const getTaken = () => {
-    try { return JSON.parse(localStorage.getItem(dayKey()) || "{}"); } catch { return {}; }
-  };
-  const setTaken = o => {
-    try { localStorage.setItem(dayKey(), JSON.stringify(o)); } catch {}
-  };
-
-  function drawProgress() {
-    if (!plan || !plan.slots) return;
-    const taken = getTaken();
-    let total = 0, done = 0;
-    SL.forEach(s => {
-      (plan.slots[s] || []).forEach(m => {
-        total++;
-        if (taken[s + m.name]) done++;
-      });
-    });
-
-    const pct = total ? Math.round((done / total) * 100) : 0;
-    $("#prog-fill").style.width = pct + "%";
-    
-    let statusText = `${done} of ${total} doses taken today`;
-    if (total > 0 && done === total) {
-      statusText += " · All complete for today! 🎉";
-    }
-    $("#prog-text").textContent = statusText;
-  }
-
-  // Medication pill click toggle
-  $("#slots-container").addEventListener("click", e => {
-    const card = e.target.closest(".med-pill-card");
-    if (!card) return;
-    const k = card.dataset.k;
-    const taken = getTaken();
-    taken[k] = !taken[k];
-    setTaken(taken);
-    drawPlan();
-  });
-
-  // Action Buttons
-  $("#btn-text-size").onclick = () => document.body.classList.toggle("big");
-  $("#btn-print").onclick = () => window.print();
-
-  ["t0", "t1", "t2"].forEach(id => {
-    $("#" + id).addEventListener("change", () => {
-      if (plan) drawPlan();
-    });
-  });
-  $("#lang").addEventListener("change", () => {
-    if (plan) updatePlanData();
-  });
-
-  // WhatsApp formatted string
-  $("#btn-share-wa").onclick = async () => {
-    const times = getTimes();
-    const text = `*💊 ${plan.name || "My"}’s Medicine Schedule*\n\n` +
-      SL.map((s, i) => {
-        const slotName = s.toUpperCase() + ` (${format12h(times[i])})`;
-        const medLines = (plan.slots[s] || []).map(m => `• ${m.name} ${m.dose} ${m.food !== 'any' ? '(' + FOOD[m.food] + ')' : ''}`).join("\n");
-        return `*${slotName}*\n${medLines || '• No medications'}\n`;
-      }).join("\n") +
-      `\n_Note: Please always confirm with your doctor or pharmacist._`;
-
-    try {
-      await navigator.clipboard.writeText(text);
-      const originalText = $("#btn-share-wa").textContent;
-      $("#btn-share-wa").textContent = "✅ Copied WhatsApp Text!";
-      setTimeout(() => $("#btn-share-wa").textContent = originalText, 2500);
-    } catch {
-      prompt("Copy text below:", text);
-    }
-  };
-
-  // Spoken Reminders
-  function speak(slot) {
-    if (!plan || !plan.slots[slot] || !plan.slots[slot].length) return;
-    const L = T[$("#lang").value] || T.en;
-    const list = plan.slots[slot].map(m => `${m.name} ${m.dose}`).join(", ");
-    const phrase = L.say(plan.name || "Friend", L.slot[slot], list);
-
-    const u = new SpeechSynthesisUtterance(phrase);
-    u.lang = L.code;
-    u.rate = 0.88;
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
-
-    const fireEl = $("#fire");
-    fireEl.style.display = "block";
-    fireEl.innerHTML = `🔔 <b>${L.slot[slot].toUpperCase()} REMINDER:</b><br>${esc(list)}`;
-    setTimeout(() => { fireEl.style.display = "none"; }, 10000);
-  }
-
-  $("#btn-speak-sample").onclick = () => {
-    const s = SL.find(s => plan && plan.slots[s] && plan.slots[s].length);
-    if (s) speak(s);
-  };
-
-  // Background speech interval
-  const spokenSlots = new Set();
-  setInterval(() => {
-    if (!$("#rem").checked || !plan) return;
-    const now = new Date();
-    const hm = now.toTimeString().slice(0, 5);
-    const day = now.toDateString();
-
-    getTimes().forEach((timeVal, idx) => {
-      const slot = SL[idx];
-      const triggerKey = `${day}-${slot}-${timeVal}`;
-      if (timeVal === hm && !spokenSlots.has(triggerKey)) {
-        spokenSlots.add(triggerKey);
-        speak(slot);
-      }
-    });
-  }, 15000);
-
-  // Initialize
-  (async () => {
-    try {
-      const p = await api("/api/plan");
-      if (p && p.meds && p.meds.length) {
-        plan = p;
-        meds = p.meds;
-        $("#who").value = p.name || "Amma";
-        $("#lang").value = p.lang || "en";
-        drawMeds();
-        drawPlan();
-        goToStep(3); // Jump straight to active schedule if one exists!
-      } else {
-        drawMeds();
-      }
-    } catch {
-      drawMeds();
-    }
-  })();
-</script>
+<script src="/app.js"></script>
 </body>
 </html>
