@@ -10,8 +10,15 @@ Offline. Private. Free.
 ![Dependencies](https://img.shields.io/badge/dependencies-none-2ea44f)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-<!-- Add a screenshot or GIF: docs/demo.gif -->
-<!-- ![DoseBuddy demo](docs/demo.gif) -->
+https://github.com/user-attachments/assets/demo.mp4
+
+https://github.com/AbdulKhadhar/dosebuddy/raw/main/docs/demo.mp4
+
+<p align="center">
+  <video src="docs/demo.mp4" controls="controls" width="100%" style="max-width: 800px; border-radius: 12px;">
+    Your browser does not support the video tag. <a href="docs/demo.mp4">Download or watch demo video</a>.
+  </video>
+</p>
 
 </div>
 
