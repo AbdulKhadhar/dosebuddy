@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DoseBuddy</title>
+<style>
+:root{--bg:#f3f6f5;--ink:#12302e;--mute:#4d6663;--line:#c9d6d3;--m:#f2b632;--a:#58b0d4;--n:#3a3f8c;--bad:#b3261e;--warn:#8a5a00}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.5 "Atkinson Hyperlegible",Verdana,Tahoma,sans-serif}
+main{max-width:920px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;margin:0 0 4px}h2{font-size:1.3rem;margin:32px 0 8px}
+p.lead{margin:0;color:var(--mute);max-width:60ch}
+textarea,input,select,button{font:inherit;color:inherit}
+textarea{width:100%;min-height:96px;padding:12px;border:2px solid var(--line);border-radius:10px;background:#fff}
+input,select{padding:8px 10px;border:2px solid var(--line);border-radius:8px;background:#fff}
+button{padding:10px 18px;border:2px solid var(--ink);border-radius:999px;background:var(--ink);color:#fff;cursor:pointer}
+button.alt{background:#fff;color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:12px;margin:8px 0;background:#fff;border:2px solid var(--line);border-radius:12px}
+.row label{display:flex;gap:4px;align-items:center}.row input[type=checkbox]{width:20px;height:20px}
+.row .nm{flex:1 1 180px}.row .ds{flex:0 1 130px}
+.note{color:var(--mute);font-size:.9rem}
+.w{padding:10px 14px;margin:6px 0;border-radius:8px;border-left:8px solid}
+.w.danger{background:#fde8e6;border-color:var(--bad)}.w.warn{background:#fff3d6;border-color:var(--warn)}.w.info{background:#e6eef0;border-color:var(--mute)}
+.card{background:#fff;border:3px solid var(--ink);border-radius:18px;padding:20px}
+.card h3.t{margin:0 0 12px;font-size:1.6rem}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.slot{border-radius:60px 60px 14px 14px;padding:18px 16px 16px;min-height:220px;border:3px solid var(--ink)}
+.slot.morning{background:#fdecc0}.slot.afternoon{background:#cfe9f4}.slot.night{background:#d8d9f2}
+.slot h4{margin:0;font-size:1.5rem;text-align:center}
+.slot .tm{text-align:center;font-weight:700;font-size:1.2rem;margin-bottom:10px}
+.slot p{margin:8px 0;font-size:1.25rem;line-height:1.3}.slot small{display:block;font-size:.95rem;color:var(--mute)}
+.foot{margin-top:14px;font-size:.9rem;color:var(--mute)}
+#fire{position:fixed;inset:auto 16px 16px 16px;padding:16px;border-radius:14px;background:var(--ink);color:#fff;font-size:1.3rem;display:none}
+@media(max-width:700px){.slots{grid-template-columns:1fr}.slot{min-height:0;border-radius:40px 40px 14px 14px}}
+.slot button.med{display:block;width:100%;text-align:left;background:rgba(255,255,255,.6);color:var(--ink);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:1.25rem;line-height:1.3}
+.slot button.med.on{opacity:.55;text-decoration:line-through}.slot button.med.on::after{content:" ✓"}
+.pb{height:14px;background:#dbe4e2;border-radius:99px;overflow:hidden;margin:6px 0}.pb i{display:block;height:100%;background:var(--n);transition:width .3s}
+body.big{font-size:22px}
+@media print{body{background:#fff}.noprint,#fire{display:none!important}main{padding:0}.card{border-width:4px}}
+@media(prefers-reduced-motion:no-preference){.card{transition:box-shadow .2s}}
+</style></head><body><main>
+<h1>DoseBuddy</h1>
+<p class="lead">Paste what the doctor said, once. DoseBuddy builds the schedule, the warnings and the fridge card, then speaks the reminders so nobody has to remember. Nothing leaves this computer.</p>
+
+<section class="noprint">
+<h2>Who is this for?</h2>
+<div class="bar">
+<label>Name <input id="who" value="Amma" size="12"></label>
+<label>Reminder language <select id="lang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="ml">മലയാളം</option></select></label>
+</div>
+
+<h2>What did the doctor say?</h2>
+<textarea id="txt" autofocus aria-label="Prescription notes" placeholder="Example: Thyroid tablet 50 mcg early morning on empty stomach. Metformin 500 mg after lunch. Calcium tablet after breakfast."></textarea>
+<div class="bar"><button id="go">Make my plan</button><button class="alt" id="ex">Try an example</button><span class="note" id="src"></span></div>
+
+<h2>Check the list</h2>
+<p class="note">Compare with the prescription. Fix anything wrong. This is the most important step.</p>
+<div id="meds"></div>
+<div class="bar"><button class="alt" id="add">Add a medicine</button><button id="mk">Make the daily plan</button></div>
+</section>
+
+<section id="out" hidden>
+<h2 class="noprint">Warnings</h2><div id="warn"></div>
+<div id="prog" class="noprint" aria-live="polite"></div>
+<div class="card" id="card"></div>
+<div class="bar noprint" style="margin-top:16px">
+<button id="pr">Print fridge card</button>
+<button class="alt" id="cp">Copy WhatsApp text</button>
+<button class="alt" id="say">Hear a sample reminder</button><button class="alt" id="big">Bigger text</button>
+</div>
+<div class="noprint">
+<h2>Spoken reminders</h2>
+<div class="bar">
+<label><input type="checkbox" id="rem"> Speak reminders (keep this page open)</label>
+<label>Morning <input type="time" id="t0" value="08:00"></label>
+<label>Afternoon <input type="time" id="t1" value="13:00"></label>
+<label>Night <input type="time" id="t2" value="20:00"></label>
+</div>
+<p class="note">Not medical advice. DoseBuddy does not replace a doctor or pharmacist. Its warnings come from a short hand-written list and may miss things. Always confirm with your pharmacist.</p>
+</div>
+</section>
+<div id="fire" role="alert"></div>
+</main>
+<script>
+const $=s=>document.querySelector(s),SL=["morning","afternoon","night"];
+const FOOD={any:"",before:"before food",after:"after food",with:"with food",empty:"empty stomach"};
+// Draft translations: have a native speaker review before real use.
+const T={
+ en:{code:"en-IN",slot:{morning:"morning",afternoon:"afternoon",night:"night"},say:(n,s,m)=>`${n}, it is ${s} time. Please take: ${m}.`},
+ hi:{code:"hi-IN",slot:{morning:"सुबह",afternoon:"दोपहर",night:"रात"},say:(n,s,m)=>`${n}, ${s} की दवा का समय हो गया है। कृपया लें: ${m}।`},
+ ml:{code:"ml-IN",slot:{morning:"രാവിലെ",afternoon:"ഉച്ചയ്ക്ക്",night:"രാത്രി"},say:(n,s,m)=>`${n}, ${s} മരുന്ന് കഴിക്കാനുള്ള സമയമായി. കഴിക്കേണ്ടത്: ${m}.`}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let meds=[],plan=null;
+async function api(p,b){const r=await fetch(p,b?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}:{});return r.json()}
+
+function drawMeds(){
+ $("#meds").innerHTML=meds.length?meds.map((m,i)=>`<div class="row">
+  <input class="nm" data-i="${i}" data-k="name" value="${esc(m.name)}" placeholder="Medicine name" aria-label="Medicine name">
+  <input class="ds" data-i="${i}" data-k="dose" value="${esc(m.dose)}" placeholder="Dose" aria-label="Dose">
+  ${SL.map(s=>`<label><input type="checkbox" data-i="${i}" data-s="${s}" ${m.times.includes(s)?"checked":""}>${s}</label>`).join("")}
+  <select data-i="${i}" data-k="food" aria-label="Food rule">${Object.keys(FOOD).map(f=>`<option value="${f}" ${m.food==f?"selected":""}>${FOOD[f]||"no food rule"}</option>`).join("")}</select>
+  <button class="alt" data-del="${i}">Remove</button></div>`).join(""):'<p class="note">No medicines yet. Type the notes above and press "Make my plan", or add one by hand.</p>';
+}
+$("#meds").addEventListener("input",e=>{const i=e.target.dataset.i;if(i==null)return;
+ if(e.target.dataset.k)meds[i][e.target.dataset.k]=e.target.value;
+ if(e.target.dataset.s){const t=meds[i].times,s=e.target.dataset.s;meds[i].times=SL.filter(x=>x==s?e.target.checked:t.includes(x))}});
+$("#meds").addEventListener("click",e=>{if(e.target.dataset.del!=null){meds.splice(+e.target.dataset.del,1);drawMeds()}});
+$("#add").onclick=()=>{meds.push({name:"",dose:"",times:[],food:"any"});drawMeds()};
+$("#go").onclick=async()=>{
+ $("#src").textContent="Reading…";
+ const r=await api("/api/extract",{text:$("#txt").value});
+ meds=r.meds;$("#src").textContent=meds.length?"Read with: "+r.source:"Could not find medicines. Try one sentence per medicine, or add by hand.";drawMeds();if(meds.length){await $("#mk").onclick();$("#card").scrollIntoView({behavior:"smooth"})}};
+$("#mk").onclick=async()=>{plan=await api("/api/plan",{meds,name:$("#who").value,lang:$("#lang").value});drawPlan()};
+
+function times(){return SL.map((s,i)=>$("#t"+i).value)}
+function drawPlan(){
+ if(!plan||!plan.meds)return;
+ $("#out").hidden=false;
+ $("#warn").innerHTML=plan.warnings.length?plan.warnings.map(w=>`<div class="w ${w.level}">${esc(w.text)}</div>`).join(""):'<div class="w info">No timing problems found in the short rule list. Still confirm with the pharmacist.</div>';
+ const t=times(),L=T[$("#lang").value];
+ const tk=getTaken();
+ $("#card").innerHTML=`<h3 class="t">${esc(plan.name||"My")}’s medicines</h3><div class="slots">`+SL.map((s,i)=>`<div class="slot ${s}"><h4>${L.slot[s]}${$("#lang").value!="en"?" · "+s:""}</h4><div class="tm">${t[i]}</div>`+
+  (plan.slots[s].map(m=>`<button class="med${tk[s+m.name]?" on":""}" data-k="${esc(s+m.name)}" aria-pressed="${!!tk[s+m.name]}"><b>${esc(m.name)}</b> ${esc(m.dose)}${FOOD[m.food]?`<small>${FOOD[m.food]}</small>`:""}</button>`).join("")||'<p class="note">Nothing</p>')+`</div>`).join("")+
+  `</div><p class="foot">Made by DoseBuddy from the doctor’s notes. Not medical advice. Ask your doctor or pharmacist if unsure.</p>`;drawProg();
+}
+const dayKey=()=>"taken:"+new Date().toDateString();
+const getTaken=()=>{try{return JSON.parse(localStorage.getItem(dayKey())||"{}")}catch{return{}}};
+const setTaken=o=>{try{localStorage.setItem(dayKey(),JSON.stringify(o))}catch{}};
+function drawProg(){const t=getTaken();let all=0,ok=0;SL.forEach(s=>plan.slots[s].forEach(m=>{all++;if(t[s+m.name])ok++}));
+ const now=new Date().toTimeString().slice(0,5),nx=times().map((x,i)=>[x,i]).filter(([x,i])=>x>=now&&plan.slots[SL[i]].some(m=>!t[SL[i]+m.name]))[0];
+ $("#prog").innerHTML=`<div class="pb"><i style="width:${all?Math.round(ok/all*100):0}%"></i></div><b>${ok} of ${all} taken today</b>`+(all&&ok==all?" · All done 🎉":nx?` · Next: ${T[$("#lang").value].slot[SL[nx[1]]]} at ${nx[0]}`:"")}
+$("#out").addEventListener("click",e=>{const p=e.target.closest(".med");if(!p)return;const t=getTaken();t[p.dataset.k]=!t[p.dataset.k];setTaken(t);drawPlan()});
+$("#big").onclick=()=>document.body.classList.toggle("big");
+["t0","t1","t2"].forEach(id=>$("#"+id).onchange=drawPlan);$("#lang").onchange=drawPlan;
+$("#pr").onclick=()=>print();
+$("#txt").addEventListener("keydown",e=>{if(e.key=="Enter"&&(e.ctrlKey||e.metaKey))$("#go").onclick()});
+$("#txt").addEventListener("paste",()=>setTimeout(()=>$("#go").onclick(),80));
+$("#ex").onclick=()=>{$("#txt").value="Thyroid tablet 50 mcg early morning empty stomach. Metformin 500 mg after lunch. Calcium tablet after breakfast. BP tablet 5 mg at night.";$("#go").onclick()};
+$("#cp").onclick=async()=>{const t=times();const txt=`*${plan.name||"My"}’s medicines*\n`+SL.map((s,i)=>`\n*${s} (${t[i]})*\n`+(plan.slots[s].map(m=>`• ${m.name} ${m.dose} ${FOOD[m.food]}`.trim()).join("\n")||"• Nothing")).join("\n")+"\n\nPlease confirm with your doctor or pharmacist.";
+ try{await navigator.clipboard.writeText(txt);$("#cp").textContent="Copied"}catch{prompt("Copy this text:",txt)}};
+
+function speak(slot){
+ const L=T[$("#lang").value],list=plan.slots[slot].map(m=>`${m.name} ${m.dose}`.trim()).join(", ");
+ if(!list)return;
+ const u=new SpeechSynthesisUtterance(L.say(plan.name||"",L.slot[slot],list));u.lang=L.code;u.rate=.85;
+ speechSynthesis.cancel();speechSynthesis.speak(u);
+ $("#fire").style.display="block";$("#fire").textContent=`${L.slot[slot]}: ${list}`;setTimeout(()=>$("#fire").style.display="none",60000)}
+$("#say").onclick=()=>{const s=SL.find(s=>plan.slots[s].length);if(s)speak(s)};
+const done=new Set();
+setInterval(()=>{if(!$("#rem").checked||!plan)return;
+ const now=new Date(),hm=now.toTimeString().slice(0,5),day=now.toDateString();
+ times().forEach((t,i)=>{const k=day+SL[i];if(t==hm&&!done.has(k)){done.add(k);speak(SL[i])}})},15000);
+
+(async()=>{const p=await api("/api/plan");if(p.meds){plan=p;meds=p.meds;$("#who").value=p.name;$("#lang").value=p.lang;drawPlan()}drawMeds()})();
+</script></body></html>

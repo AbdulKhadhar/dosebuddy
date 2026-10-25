@@ -1,0 +1,17 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build one-click zip
+        run: git archive --format=zip --prefix=dosebuddy/ -o "dosebuddy-${GITHUB_REF_NAME}.zip" HEAD
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dosebuddy-*.zip
+          generate_release_notes: true
